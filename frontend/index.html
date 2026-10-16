@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业决策支持系统</title>
+    <style>
+        :root {
+            --ink: #0f172a;
+            --ink-2: #334155;
+            --ink-3: #64748b;
+            --ink-4: #94a3b8;
+            --bg: #ffffff;
+            --bg-2: #f8fafc;
+            --bg-3: #f1f5f9;
+            --line: #e2e8f0;
+            --line-2: #f1f5f9;
+            --green: #059669;
+            --green-2: #047857;
+            --green-bg: #ecfdf5;
+            --radius: 14px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .container {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ---------- Header ---------- */
+        header {
+            position: fixed;
+            inset: 0 0 auto 0;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: saturate(180%) blur(16px);
+            -webkit-backdrop-filter: saturate(180%) blur(16px);
+            border-bottom: 1px solid var(--line-2);
+            z-index: 100;
+            transition: box-shadow .25s ease, border-color .25s ease;
+        }
+        header.scrolled { box-shadow: 0 1px 0 var(--line); }
+
+        .nav-inner {
+            width: 100%;
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo-mark {
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--green), #34d399);
+            display: grid; place-items: center;
+            color: #fff; font-size: .72rem; font-weight: 800;
+            letter-spacing: -.02em;
+        }
+        .logo-text { font-size: .92rem; font-weight: 600; letter-spacing: -.01em; }
+
+        .btn-login {
+            font-size: .85rem; font-weight: 600;
+            color: #fff;
+            background: var(--ink);
+            padding: 8px 22px;
+            border-radius: 9px;
+            transition: transform .15s ease, opacity .15s ease;
+        }
+        .btn-login:hover { transform: translateY(-1px); opacity: .9; }
+
+        /* ---------- Hero ---------- */
+        .hero {
+            position: relative;
+            padding: 190px 0 110px;
+            text-align: center;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -180px; right: -120px;
+            width: 640px; height: 640px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(5,150,105,.10), transparent 68%);
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -220px; left: -160px;
+            width: 560px; height: 560px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(52,211,153,.08), transparent 68%);
+        }
+        .hero .container { position: relative; z-index: 2; }
+
+        .hero h1 {
+            font-size: clamp(2rem, 4.6vw, 3.6rem);
+            font-weight: 700;
+            letter-spacing: -.035em;
+            line-height: 1.12;
+            margin-bottom: 22px;
+        }
+
+        .hero-sub {
+            font-size: 1.05rem;
+            color: var(--ink-3);
+            max-width: 600px;
+            margin: 0 auto 36px;
+            line-height: 1.75;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--green);
+            color: #fff;
+            padding: 13px 34px;
+            border-radius: 10px;
+            font-size: .92rem;
+            font-weight: 600;
+            transition: transform .18s ease, background .18s ease;
+        }
+        .hero-cta:hover { transform: translateY(-2px); background: var(--green-2); }
+        .hero-cta svg { transition: transform .18s ease; }
+        .hero-cta:hover svg { transform: translateX(3px); }
+
+        .hero-stats {
+            margin-top: 56px;
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            flex-wrap: wrap;
+        }
+        .hero-stat {
+            padding: 0 34px;
+            position: relative;
+        }
+        .hero-stat:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0; top: 50%;
+            transform: translateY(-50%);
+            width: 1px; height: 32px;
+            background: var(--line);
+        }
+        .hero-stat .num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: -.02em;
+            line-height: 1.2;
+        }
+        .hero-stat .lab {
+            font-size: .78rem;
+            color: var(--ink-4);
+            margin-top: 4px;
+        }
+
+        /* ---------- Section frame ---------- */
+        section { padding: 88px 0; }
+        .sec-light { background: var(--bg-2); }
+
+        .sec-head { text-align: center; margin-bottom: 56px; }
+        .sec-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .78rem;
+            font-weight: 600;
+            letter-spacing: .04em;
+            color: #155eef;
+            background: #eef4ff;
+            padding: 6px 15px;
+            border-radius: 100px;
+            margin-bottom: 18px;
+        }
+        .sec-title {
+            font-size: clamp(1.5rem, 3vw, 2.05rem);
+            font-weight: 700;
+            letter-spacing: -.03em;
+            line-height: 1.25;
+        }
+        .sec-desc {
+            margin-top: 14px;
+            font-size: .98rem;
+            color: var(--ink-3);
+            max-width: 580px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ---------- Capabilities ---------- */
+        .cap-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+        .cap {
+            background: var(--bg);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 30px 28px;
+            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+        }
+        .cap:hover {
+            transform: translateY(-5px);
+            border-color: #a7f3d0;
+            box-shadow: 0 18px 40px -18px rgba(5,150,105,.32);
+        }
+        .cap-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            background: var(--bg-3);
+            display: grid; place-items: center;
+            font-size: 1.35rem;
+            margin-bottom: 18px;
+            transition: background .25s ease, transform .25s ease;
+        }
+        .cap:hover .cap-icon { background: var(--ink); transform: scale(1.06); }
+        .cap:hover .cap-icon span { filter: grayscale(1) brightness(2); }
+
+        .cap h3 {
+            font-size: 1.02rem;
+            font-weight: 650;
+            letter-spacing: -.01em;
+            margin-bottom: 9px;
+        }
+        .cap p {
+            font-size: .88rem;
+            color: var(--ink-3);
+            line-height: 1.72;
+        }
+        .cap-tag {
+            display: inline-block;
+            margin-top: 18px;
+            font-size: .72rem;
+            font-weight: 600;
+            letter-spacing: .03em;
+            color: #155eef;
+            background: #eef4ff;
+            padding: 4px 11px;
+            border-radius: 100px;
+        }
+
+        /* ---------- Evidence ---------- */
+        .ev-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+        .ev {
+            background: var(--bg);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 26px 28px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            transition: border-color .22s ease, transform .22s ease;
+        }
+        .ev:hover { border-color: var(--green); transform: translateY(-3px); }
+        .ev-dot {
+            flex: none;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--ink-3);
+            margin-top: 8px;
+        }
+        .ev h4 { font-size: .94rem; font-weight: 650; margin-bottom: 6px; }
+        .ev p { font-size: .86rem; color: var(--ink-3); line-height: 1.7; }
+
+        /* ---------- Footer ---------- */
+        footer {
+            background: #0b1220;
+            color: #94a3b8;
+            padding: 64px 0 0;
+        }
+        .foot-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.3fr;
+            gap: 48px;
+            padding-bottom: 48px;
+        }
+        .foot-brand h3 {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 650;
+            margin-bottom: 12px;
+        }
+        .foot-brand p {
+            font-size: .85rem;
+            line-height: 1.7;
+            max-width: 250px;
+        }
+        .foot-col h4 {
+            color: #fff;
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .foot-col ul { list-style: none; }
+        .foot-col li { margin-bottom: 10px; }
+        .foot-col a {
+            font-size: .84rem;
+            color: #94a3b8;
+            transition: color .15s ease, padding-left .15s ease;
+        }
+        .foot-col a:hover { color: #fff; padding-left: 4px; }
+        .foot-contact {
+            font-size: .84rem;
+            line-height: 1.9;
+        }
+        .foot-contact strong {
+            display: block;
+            color: #cbd5e1;
+            font-weight: 500;
+            font-size: .8rem;
+            margin-bottom: 2px;
+        }
+        .foot-contact div { margin-bottom: 12px; }
+
+        .foot-bottom {
+            border-top: 1px solid #1e293b;
+            padding: 22px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .foot-bottom p { font-size: .78rem; }
+        .foot-links { display: flex; gap: 22px; }
+        .foot-links a { font-size: .78rem; color: #64748b; transition: color .15s; }
+        .foot-links a:hover { color: #cbd5e1; }
+
+        /* ---------- Back to top ---------- */
+        .totop {
+            position: fixed;
+            right: 26px; bottom: 26px;
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            background: var(--green);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: grid; place-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: opacity .28s ease, transform .28s ease, visibility .28s;
+            z-index: 99;
+            box-shadow: 0 8px 24px -8px rgba(5,150,105,.6);
+        }
+        .totop.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .totop:hover { background: var(--green-2); }
+
+        /* ---------- Reveal ---------- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity .7s cubic-bezier(.2,.7,.3,1), transform .7s cubic-bezier(.2,.7,.3,1);
+            will-change: opacity, transform;
+        }
+        .reveal.in { opacity: 1; transform: none; }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 900px) {
+            .cap-grid { grid-template-columns: repeat(2, 1fr); }
+            .foot-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 640px) {
+            .hero { padding: 150px 0 80px; }
+            .hero-stat { padding: 0 20px; }
+            .cap-grid { grid-template-columns: 1fr; }
+            .ev-grid { grid-template-columns: 1fr; }
+            .foot-grid { grid-template-columns: 1fr; gap: 36px; }
+            .hero-stats { gap: 14px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header id="header">
+    <div class="nav-inner">
+        <a href="#" class="logo">
+            <div class="logo-mark">ED</div>
+            <span class="logo-text">企业决策支持系统</span>
+        </a>
+        <a href="./login.html" class="btn-login">注册 / 登录</a>
+    </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="container">
+        <h1 class="reveal">数据驱动决策<br>智能引领未来</h1>
+        <p class="hero-sub reveal">覆盖从数据采集到策略输出的完整决策链路，让每一条建议都可追溯、可复核。</p>
+        <a href="./login.html" class="hero-cta reveal">
+            立即开始
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <div class="hero-stats reveal">
+            <div class="hero-stat">
+                <div class="num">3,000+</div>
+                <div class="lab">结构化案例切片</div>
+            </div>
+            <div class="hero-stat">
+                <div class="num">50+</div>
+                <div class="lab">行业历史数据覆盖</div>
+            </div>
+            <div class="hero-stat">
+                <div class="num">100%</div>
+                <div class="lab">决策可追溯</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Capabilities -->
+<section class="sec-light">
+    <div class="container">
+        <div class="sec-head reveal">
+            <div class="sec-eyebrow">🛡️ 核心能力</div>
+            <h2 class="sec-title">覆盖决策全流程的六大能力</h2>
+            <p class="sec-desc">从数据采集到洞察输出，每一步都为「让决策更快更准」而设计。</p>
+        </div>
+        <div class="cap-grid">
+            <div class="cap reveal">
+                <div class="cap-icon"><span>🔍</span></div>
+                <h3>决策可追溯</h3>
+                <p>每一条策略建议均可追溯至历史案例与原始出处，形成完整的决策证据链，可复核、可审计。</p>
+                <span class="cap-tag">已实装</span>
+            </div>
+            <div class="cap reveal">
+                <div class="cap-icon"><span>📚</span></div>
+                <h3>跨行业历史数据</h3>
+                <p>覆盖 50+ 行业的结构化历史数据，支持按行业、场景、企业规模多维索引与检索。</p>
+                <span class="cap-tag">已实装</span>
+            </div>
+            <div class="cap reveal">
+                <div class="cap-icon"><span>🤖</span></div>
+                <h3>多智能体流水线</h3>
+                <p>从输入到输出经过多个 AI 角色协同处理，每个环节独立验证、逐层递进。</p>
+                <span class="cap-tag">已实装</span>
+            </div>
+            <div class="cap reveal">
+                <div class="cap-icon"><span>🧩</span></div>
+                <h3>条件策略匹配器</h3>
+                <p>不是简单的 RAG 检索，而是自动归纳「条件-策略」规则，实现精准策略匹配。</p>
+                <span class="cap-tag">已实装</span>
+            </div>
+            <div class="cap reveal">
+                <div class="cap-icon"><span>🔄</span></div>
+                <h3>自迭代与后验验证</h3>
+                <p>系统通过案例回传自动检验条件组有效性，持续修正匹配规则，形成闭环优化。</p>
+                <span class="cap-tag">已实装</span>
+            </div>
+            <div class="cap reveal">
+                <div class="cap-icon"><span>🗃️</span></div>
+                <h3>案例底表</h3>
+                <p>3,000+ 条真实存在的历史案例切片，每条建议均附带历史案例与理论依据。</p>
+                <span class="cap-tag">已实装</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Evidence -->
+<section>
+    <div class="container">
+        <div class="sec-head reveal">
+            <div class="sec-eyebrow">✅ 验证与进展</div>
+            <h2 class="sec-title">当前状态</h2>
+            <p class="sec-desc">每一项能力都有实际进展支撑，不做空泛承诺。</p>
+        </div>
+        <div class="ev-grid">
+            <div class="ev reveal">
+                <div class="ev-dot"></div>
+                <div>
+                    <h4>建议可复核</h4>
+                    <p>每条建议均附带历史案例与理论依据，支持人工复核与交叉验证。</p>
+                </div>
+            </div>
+            <div class="ev reveal">
+                <div class="ev-dot"></div>
+                <div>
+                    <h4>企业内部试点</h4>
+                    <p>已开展企业内部试点应用，在实际业务场景中验证系统有效性。</p>
+                </div>
+            </div>
+            <div class="ev reveal">
+                <div class="ev-dot"></div>
+                <div>
+                    <h4>用户盲测</h4>
+                    <p>已开展小范围用户盲测，收集真实使用反馈用于系统迭代优化。</p>
+                </div>
+            </div>
+            <div class="ev reveal">
+                <div class="ev-dot"></div>
+                <div>
+                    <h4>多角色协作</h4>
+                    <p>支持多角色分工与条件策略自动匹配，适配复杂组织决策流程。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="foot-grid">
+            <div class="foot-brand">
+                <h3>企业决策支持系统</h3>
+                <p>数据驱动决策，智能引领未来。为企业管理层提供专业、高效的决策辅助平台。</p>
+            </div>
+            <div class="foot-col">
+                <h4>产品</h4>
+                <ul>
+                    <li><a href="#">功能概览</a></li>
+                    <li><a href="#">解决方案</a></li>
+                    <li><a href="#">更新日志</a></li>
+                    <li><a href="#">价格方案</a></li>
+                </ul>
+            </div>
+            <div class="foot-col">
+                <h4>资源</h4>
+                <ul>
+                    <li><a href="#">帮助中心</a></li>
+                    <li><a href="#">最佳实践</a></li>
+                    <li><a href="#">技术博客</a></li>
+                    <li><a href="#">社区论坛</a></li>
+                </ul>
+            </div>
+            <div class="foot-col">
+                <h4>联系我们</h4>
+                <div class="foot-contact">
+                    <div><strong>邮箱</strong>support@edss.com</div>
+                    <div><strong>电话</strong>400-888-8888</div>
+                    <div><strong>地址</strong>北京市海淀区西土城路10号</div>
+                </div>
+            </div>
+        </div>
+        <div class="foot-bottom">
+            <p>&copy; 2025 企业决策支持系统. 保留所有权利.</p>
+            <div class="foot-links">
+                <a href="#">隐私政策</a>
+                <a href="#">服务条款</a>
+                <a href="#">Cookie 设置</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<button class="totop" id="totop" aria-label="回到顶部">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+    // Reveal on scroll
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('in');
+                io.unobserve(e.target);
+            }
+        });
+    }, { threshold: .12, rootMargin: '0px 0px -40px' });
+
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Header shadow
+    const header = document.getElementById('header');
+    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Back to top
+    const totop = document.getElementById('totop');
+    window.addEventListener('scroll', () => {
+        totop.classList.toggle('show', window.scrollY > 400);
+    }, { passive: true });
+    totop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
+</body>
+</html>

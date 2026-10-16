@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>企业决策支持系统</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f9fafb;
+    --sidebar: #f3f4f6;
+    --card: #ffffff;
+    --border: #e5e7eb;
+    --text: #1f2937;
+    --text-light: #6b7280;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --user-bubble: #2563eb;
+    --bot-bubble: #ffffff;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ---------- 侧边栏 ---------- */
+  #sidebar {
+    width: 240px;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 16px 12px;
+    flex-shrink: 0;
+  }
+
+  #logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  #logo .dot {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+  }
+
+  .new-chat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    font-size: 14px;
+    color: var(--text);
+    cursor: pointer;
+    transition: background .15s;
+    margin-bottom: 16px;
+  }
+  .new-chat:hover { background: #eef2ff; }
+
+  .nav-label {
+    font-size: 12px;
+    color: var(--text-light);
+    padding: 6px 10px;
+    margin-top: 8px;
+  }
+
+  .nav-item {
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--text);
+    cursor: pointer;
+    transition: background .15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-item:hover { background: #e9ecf1; }
+  .nav-item.active { background: #e0e7ff; color: var(--accent); font-weight: 500; }
+
+  #sidebar-footer {
+    margin-top: auto;
+    font-size: 12px;
+    color: var(--text-light);
+    padding: 10px;
+  }
+
+  /* ---------- 主区域 ---------- */
+  #main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  #topbar {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 14px;
+    color: var(--text-light);
+  }
+
+  #topbar .title { font-weight: 500; color: var(--text); }
+
+  #chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 0;
+  }
+
+  .inner {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .msg { margin-bottom: 24px; display: flex; gap: 12px; }
+  .msg.user { justify-content: flex-end; }
+
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .avatar.bot { background: linear-gradient(135deg, #2563eb, #7c3aed); }
+  .avatar.user { background: #9ca3af; }
+
+  .bubble {
+    max-width: 82%;
+    padding: 14px 18px;
+    border-radius: 14px;
+    line-height: 1.75;
+    font-size: 15px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .msg.user .bubble {
+    background: var(--user-bubble);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .msg.bot .bubble {
+    background: var(--bot-bubble);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+  }
+
+  /* 打字光标 */
+  .typing::after {
+    content: "▍";
+    animation: blink 1s step-end infinite;
+    color: var(--accent);
+    margin-left: 2px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---------- 输入栏 ---------- */
+  #inputBar {
+    padding: 16px 24px 28px;
+    background: var(--bg);
+  }
+  #inputWrap {
+    max-width: 780px;
+    margin: 0 auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 8px 8px 8px 16px;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  #inputWrap:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+  }
+
+  textarea {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    font-family: inherit;
+    line-height: 1.6;
+    padding: 8px 0;
+    max-height: 160px;
+    background: transparent;
+    color: var(--text);
+  }
+  textarea::placeholder { color: #9ca3af; }
+
+  #sendBtn {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s;
+    flex-shrink: 0;
+  }
+  #sendBtn:hover { background: var(--accent-hover); }
+  #sendBtn:disabled { background: #c7d2fe; cursor: not-allowed; }
+  #sendBtn svg { width: 18px; height: 18px; }
+
+  .hint {
+    max-width: 780px;
+    margin: 8px auto 0;
+    font-size: 12px;
+    color: var(--text-light);
+    text-align: center;
+  }
+
+  /* 滚动条 */
+  #chat::-webkit-scrollbar { width: 8px; }
+  #chat::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+  #chat::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+  @media (max-width: 720px) {
+    #sidebar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 侧边栏 -->
+<aside id="sidebar">
+  <div id="logo">
+    <div class="dot"></div>
+    <span>决策支持系统</span>
+  </div>
+
+  <div class="new-chat" onclick="newChat()">
+    <span style="font-size:16px;">＋</span> 新建分析
+  </div>
+
+  <div class="nav-label">功能</div>
+  <div class="nav-item active">💬 情境对话</div>
+  <div class="nav-item">📊 策略推荐</div>
+  <div class="nav-item">📚 案例参考</div>
+  <div class="nav-item">📝 分析报告</div>
+
+  <div class="nav-label">知识</div>
+  <div class="nav-item">🗂 条件策略库</div>
+  <div class="nav-item">🕘 历史记录</div>
+
+  <div id="sidebar-footer">v0.1 · 内部试用版</div>
+</aside>
+
+<!-- 主区域 -->
+<div id="main">
+  <div id="topbar">
+    <span class="title">情境对话</span>
+    <span>HEIT-DSS</span>
+  </div>
+
+  <div id="chat">
+    <div class="inner" id="chatInner">
+      <div class="msg bot">
+        <div class="avatar bot">AI</div>
+        <div class="bubble">你好，我是企业决策支持助手。请告诉我你的行业、企业情况或想解决的问题，我会结合历史案例与跨学科理论，给你一份有依据的策略建议。</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="inputBar">
+    <div id="inputWrap">
+      <textarea id="userInput" rows="1" placeholder="描述你的情境，例如：我是一家区域性连锁便利店，如何应对社区团购冲击？"></textarea>
+      <button id="sendBtn" onclick="send()" title="发送">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+    <div class="hint">Enter 发送 · Shift + Enter 换行</div>
+  </div>
+</div>
+
+<script>
+const API_URL = "/api/analyze";   // 后端接口占位
+
+const chatInner = document.getElementById("chatInner");
+const chat = document.getElementById("chat");
+const input = document.getElementById("userInput");
+const btn = document.getElementById("sendBtn");
+
+function addMsg(text, who, typing = false) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg " + who;
+
+  if (who === "bot") {
+    const av = document.createElement("div");
+    av.className = "avatar bot";
+    av.textContent = "AI";
+    wrap.appendChild(av);
+  }
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble" + (typing ? " typing" : "");
+  bubble.textContent = text;
+  wrap.appendChild(bubble);
+
+  if (who === "user") {
+    const av = document.createElement("div");
+    av.className = "avatar user";
+    av.textContent = "我";
+    wrap.appendChild(av);
+  }
+
+  chatInner.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+  return bubble;
+}
+
+function newChat() {
+  chatInner.innerHTML = "";
+  addMsg("你好，我是企业决策支持助手。请告诉我你的行业、企业情况或想解决的问题。", "bot");
+  input.value = "";
+  input.focus();
+}
+
+async function send() {
+  const text = input.value.trim();
+  if (!text) return;
+
+  addMsg(text, "user");
+  input.value = "";
+  input.style.height = "auto";
+  btn.disabled = true;
+
+  const botBubble = addMsg("", "bot", true);
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
+    });
+    const data = await res.json();
+    botBubble.classList.remove("typing");
+    botBubble.textContent = data.reply || "（无返回内容）";
+  } catch (e) {
+    botBubble.classList.remove("typing");
+    botBubble.textContent = "请求失败：" + e.message;
+  } finally {
+    btn.disabled = false;
+    input.focus();
+    chat.scrollTop = chat.scrollHeight;
+  }
+}
+
+// 自适应高度
+input.addEventListener("input", () => {
+  input.style.height = "auto";
+  input.style.height = Math.min(input.scrollHeight, 160) + "px";
+});
+
+// 快捷键
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+});
+
+input.focus();
+</script>
+</body>
+</html>
