@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>企业决策支持系统</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f9fafb;
+    --sidebar: #f3f4f6;
+    --card: #ffffff;
+    --border: #e5e7eb;
+    --text: #1f2937;
+    --text-light: #6b7280;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --user-bubble: #2563eb;
+    --bot-bubble: #ffffff;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ---------- 侧边栏 ---------- */
+  #sidebar {
+    width: 240px;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 16px 12px 12px;
+    flex-shrink: 0;
+  }
+
+  #logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  #logo .dot {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+  }
+
+  .new-chat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    cursor: pointer;
+    transition: background .15s;
+    margin-bottom: 14px;
+    width: 100%;
+    text-align: left;
+  }
+  .new-chat:hover { background: #eef2ff; }
+  .new-chat .plus { font-size: 16px; }
+
+  .nav-label {
+    font-size: 12px;
+    color: var(--text-light);
+    padding: 6px 10px;
+    flex-shrink: 0;
+  }
+
+  #historyList {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-right: 2px;
+  }
+  #historyList::-webkit-scrollbar { width: 6px; }
+  #historyList::-webkit-scrollbar-thumb { background: #d8dbe0; border-radius: 3px; }
+
+  .hist-item {
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .15s;
+  }
+  .hist-item:hover { background: #e9ecf1; }
+  .hist-item.active { background: #e0e7ff; color: var(--accent); font-weight: 500; }
+  .hist-item .t {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .hist-item .x {
+    font-size: 14px;
+    color: var(--text-light);
+    opacity: 0;
+    padding: 0 2px;
+    transition: opacity .15s;
+  }
+  .hist-item:hover .x { opacity: .7; }
+  .hist-item .x:hover { opacity: 1; color: #dc2626; }
+
+  .empty-hist {
+    font-size: 12px;
+    color: var(--text-light);
+    padding: 8px 10px;
+  }
+
+  #sidebar-footer {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--text-light);
+    padding: 10px;
+  }
+
+  /* ---------- 主区域 ---------- */
+  #main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  #topbar {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 14px;
+    color: var(--text-light);
+    flex-shrink: 0;
+  }
+  #topbar .title {
+    font-weight: 500;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 70%;
+  }
+  #topbar .brand { font-size: 12px; letter-spacing: .5px; }
+
+  #chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 0 8px;
+  }
+  #chat::-webkit-scrollbar { width: 8px; }
+  #chat::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+  #chat::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+  .inner {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .msg { margin-bottom: 22px; display: flex; gap: 10px; }
+  .msg.user { justify-content: flex-end; }
+  .msg .col {
+    max-width: 82%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  .msg.user .col { align-items: flex-end; }
+
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .avatar.bot { background: linear-gradient(135deg, #2563eb, #7c3aed); }
+  .avatar.user { background: #9ca3af; }
+
+  .bubble {
+    padding: 13px 18px;
+    border-radius: 14px;
+    line-height: 1.75;
+    font-size: 15px;
+    word-break: break-word;
+    width: 100%;
+  }
+  .msg.user .bubble {
+    background: var(--user-bubble);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .msg.bot .bubble {
+    background: var(--bot-bubble);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+  }
+  .bubble.error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+  }
+
+  /* 富文本渲染 */
+  .bubble p { margin: 0 0 8px; }
+  .bubble p:last-child { margin-bottom: 0; }
+  .bubble ul { margin: 4px 0 10px; padding-left: 20px; }
+  .bubble ul:last-child { margin-bottom: 0; }
+  .bubble li { margin: 3px 0; }
+  .bubble strong { font-weight: 600; }
+  .bubble code {
+    background: #f3f4f6;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .msg.user .bubble code { background: rgba(255,255,255,.2); }
+  .md-h { font-weight: 600; margin: 4px 0 8px; }
+  .md-h:first-child { margin-top: 0; }
+  .md-gap { height: 6px; }
+
+  /* 打字光标 */
+  .typing::after {
+    content: "▍";
+    animation: blink 1s step-end infinite;
+    color: var(--accent);
+    margin-left: 2px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* 建议追问 */
+  .suggests { display: flex; flex-wrap: wrap; gap: 8px; }
+  .suggests button {
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--accent);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .suggests button:hover { background: #eff4ff; border-color: var(--accent); }
+
+  /* ---------- 输入栏 ---------- */
+  #inputBar {
+    padding: 12px 24px 20px;
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+
+  #modeBar {
+    max-width: 780px;
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .mode-switch {
+    display: flex;
+    gap: 4px;
+    background: #eceef1;
+    padding: 3px;
+    border-radius: 10px;
+  }
+  .mode-switch button {
+    border: none;
+    background: transparent;
+    padding: 6px 13px;
+    font-size: 13px;
+    font-family: inherit;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .mode-switch button:hover { color: var(--text); }
+  .mode-switch button.active {
+    background: #fff;
+    color: var(--accent);
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0,0,0,.07);
+  }
+
+  .sub-switch { display: flex; gap: 6px; }
+  .sub-switch button {
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 5px 13px;
+    font-size: 12px;
+    font-family: inherit;
+    border-radius: 999px;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: all .15s;
+  }
+  .sub-switch button:hover { border-color: #c7d2fe; }
+  .sub-switch button.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: #eff4ff;
+    font-weight: 500;
+  }
+
+  #inputWrap {
+    max-width: 780px;
+    margin: 0 auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 8px 8px 8px 16px;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  #inputWrap:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+  }
+
+  textarea {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    font-family: inherit;
+    line-height: 1.6;
+    padding: 8px 0;
+    max-height: 160px;
+    background: transparent;
+    color: var(--text);
+  }
+  textarea::placeholder { color: #9ca3af; }
+
+  #sendBtn {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s;
+    flex-shrink: 0;
+  }
+  #sendBtn:hover { background: var(--accent-hover); }
+  #sendBtn:disabled { background: #c7d2fe; cursor: not-allowed; }
+  #sendBtn svg { width: 18px; height: 18px; }
+
+  .hint {
+    max-width: 780px;
+    margin: 8px auto 0;
+    font-size: 12px;
+    color: var(--text-light);
+    text-align: center;
+    min-height: 16px;
+  }
+
+  @media (max-width: 720px) {
+    #sidebar { display: none; }
+    .msg .col { max-width: 88%; }
+    #inputBar { padding: 10px 14px 16px; }
+    .inner { padding: 0 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 侧边栏 -->
+<aside id="sidebar">
+  <div id="logo">
+    <div class="dot"></div>
+    <span>决策支持系统</span>
+  </div>
+
+  <button class="new-chat" onclick="newChat()">
+    <span class="plus">＋</span> 新建对话
+  </button>
+
+  <div class="nav-label">历史记录</div>
+  <div id="historyList"></div>
+
+  <div id="sidebar-footer">v0.2 · 内部试用版</div>
+</aside>
+
+<!-- 主区域 -->
+<div id="main">
+  <div id="topbar">
+    <span class="title" id="topTitle">新对话</span>
+    <span class="brand">HEIT-DSS</span>
+  </div>
+
+  <div id="chat">
+    <div class="inner" id="chatInner"></div>
+  </div>
+
+  <div id="inputBar">
+    <div id="modeBar">
+      <div class="mode-switch" id="modeSwitch">
+        <button data-mode="match">🎯 策略匹配</button>
+        <button data-mode="evaluate">🧭 战略评估</button>
+      </div>
+      <div class="sub-switch" id="subSwitch">
+        <button data-sub="standard">标准版</button>
+        <button data-sub="auto">无脑版</button>
+      </div>
+    </div>
+
+    <div id="inputWrap">
+      <textarea id="userInput" rows="1"></textarea>
+      <button id="sendBtn" onclick="send()" title="发送">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+
+    <div class="hint" id="modeHint"></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+ * 配置
+ * =======================================================*/
+const API_URL = "/api/analyze";      // 后端接口
+const STORE_KEY = "heit-dss-v2";      // 本地存储键
+
+/* =========================================================
+ * 状态
+ * =======================================================*/
+const state = {
+  convos: [],          // [{id, title, mode, sub, messages:[{role,content,suggestions,ts}], updatedAt}]
+  currentId: null,
+  mode: "match",       // match | evaluate
+  sub: "standard"      // standard | auto （仅 match 模式有效）
+};
+
+let busy = false;
+
+/* =========================================================
+ * DOM
+ * =======================================================*/
+const chatInner  = document.getElementById("chatInner");
+const chatEl     = document.getElementById("chat");
+const input      = document.getElementById("userInput");
+const btn        = document.getElementById("sendBtn");
+const historyList= document.getElementById("historyList");
+const topTitle   = document.getElementById("topTitle");
+const modeSwitch = document.getElementById("modeSwitch");
+const subSwitch  = document.getElementById("subSwitch");
+const modeHint   = document.getElementById("modeHint");
+
+/* =========================================================
+ * 文案
+ * =======================================================*/
+const HINTS = {
+  "match:standard": "说出你已知的条件，我告诉你匹配到哪些策略、每条策略还缺什么条件。",
+  "match:auto":     "信息不全也没关系，我先联网检索补齐条件，再请你确认或更正。",
+  "evaluate":       "描述你想采用的战略，我找历史相似策略并做条件比对。"
+};
+
+const PLACEHOLDERS = {
+  "match:standard": "例如：区域连锁便利店，60 家店，生鲜为主，受社区团购冲击，可投入 200 万",
+  "match:auto":     "随便说说你的企业或问题，信息不全没关系",
+  "evaluate":       "例如：我打算把门店改成「前置仓 + 即时配送」，投入 500 万，这套战略能用吗？"
+};
+
+function greeting(mode, sub) {
+  if (mode === "evaluate") {
+    return "**战略评估模式**\n\n"
+         + "请描述你想采用的战略（目标、动作、投入）。我会：\n"
+         + "- 检索历史相似策略\n"
+         + "- 用条件库比对你的实际处境\n"
+         + "- 告诉你这套战略能不能用、关键缺口在哪";
+  }
+  if (sub === "auto") {
+    return "**策略匹配 · 无脑版**\n\n"
+         + "你只要把企业或问题说出来就行，信息不全没关系。我会：\n"
+         + "- 联网检索补齐行业与情境条件\n"
+         + "- 列出需要你 **更正 / 确认** 的条件\n"
+         + "- 条件齐了再去匹配策略库";
+  }
+  return "**策略匹配 · 标准版**\n\n"
+       + "把你已知的条件告诉我——行业、区域、规模、渠道、资金、团队、当前瓶颈等。我会：\n"
+       + "- 告诉你这些条件能匹配到哪些策略\n"
+       + "- 每条策略还缺哪些条件\n"
+       + "- 你能补的，补上就能提高匹配度";
+}
+
+/* =========================================================
+ * 工具
+ * =======================================================*/
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+function modeKey() {
+  return state.mode === "evaluate" ? "evaluate" : "match:" + state.sub;
+}
+
+function currentConvo() {
+  return state.convos.find(c => c.id === state.currentId) || null;
+}
+
+function ensureConvo() {
+  let c = currentConvo();
+  if (!c) { newChat(true); c = currentConvo(); }
+  return c;
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      convos: state.convos,
+      currentId: state.currentId
+    }));
+  } catch (e) { /* 忽略存储异常 */ }
+}
+
+function scrollBottom() {
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+/* =========================================================
+ * 轻量 Markdown → HTML
+ * =======================================================*/
+function mdToHtml(text) {
+  const esc = t => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const inline = t => esc(t)
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/`(.+?)`/g, "<code>$1</code>");
+
+  const out = [];
+  let list = null;
+  const flush = () => {
+    if (list) { out.push("<ul>" + list.join("") + "</ul>"); list = null; }
+  };
+
+  for (const raw of String(text).split("\n")) {
+    const line = raw.replace(/\s+$/, "");
+
+    const h = line.match(/^#{1,4}\s+(.*)$/);
+    if (h) { flush(); out.push('<div class="md-h">' + inline(h[1]) + "</div>"); continue; }
+
+    const li = line.match(/^\s*[-*•]\s+(.*)$/) || line.match(/^\s*\d+[.)、]\s*(.*)$/);
+    if (li) { (list = list || []).push("<li>" + inline(li[1]) + "</li>"); continue; }
+
+    if (!line.trim()) { flush(); out.push('<div class="md-gap"></div>'); continue; }
+
+    flush();
+    out.push("<p>" + inline(line) + "</p>");
+  }
+  flush();
+  return out.join("");
+}
+
+/* =========================================================
+ * 渲染
+ * =======================================================*/
+function renderAll() {
+  renderHistory();
+  renderModeBar();
+  renderChat();
+}
+
+function renderModeBar() {
+  [...modeSwitch.children].forEach(b =>
+    b.classList.toggle("active", b.dataset.mode === state.mode)
+  );
+  subSwitch.style.display = state.mode === "match" ? "flex" : "none";
+  [...subSwitch.children].forEach(b =>
+    b.classList.toggle("active", b.dataset.sub === state.sub)
+  );
+
+  const k = modeKey();
+  modeHint.textContent = HINTS[k] || "";
+  input.placeholder = PLACEHOLDERS[k] || "";
+}
+
+function renderHistory() {
+  historyList.innerHTML = "";
+  if (!state.convos.length) {
+    historyList.innerHTML = '<div class="empty-hist">暂无记录</div>';
+    return;
+  }
+  for (const c of state.convos) {
+    const el = document.createElement("div");
+    el.className = "hist-item" + (c.id === state.currentId ? " active" : "");
+
+    const t = document.createElement("span");
+    t.className = "t";
+    t.textContent = c.title || "新对话";
+    t.title = c.title || "";
+
+    const x = document.createElement("span");
+    x.className = "x";
+    x.textContent = "×";
+    x.onclick = e => { e.stopPropagation(); deleteConvo(c.id); };
+
+    el.appendChild(t);
+    el.appendChild(x);
+    el.onclick = () => openConvo(c.id);
+    historyList.appendChild(el);
+  }
+}
+
+function renderChat() {
+  const c = currentConvo();
+  chatInner.innerHTML = "";
+  topTitle.textContent = c ? (c.title || "新对话") : "新对话";
+  if (!c) return;
+
+  for (const m of c.messages) {
+    appendBubble(m.role, m.content, { suggestions: m.suggestions });
+  }
+  scrollBottom();
+}
+
+/* =========================================================
+ * 气泡
+ * =======================================================*/
+function appendBubble(role, content, opts = {}) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg " + role;
+
+  if (role === "bot") {
+    const av = document.createElement("div");
+    av.className = "avatar bot";
+    av.textContent = "AI";
+    wrap.appendChild(av);
+  }
+
+  const col = document.createElement("div");
+  col.className = "col";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble" + (opts.typing ? " typing" : "");
+  if (!opts.typing) bubble.innerHTML = mdToHtml(content);
+  col.appendChild(bubble);
+
+  if (opts.suggestions && opts.suggestions.length) {
+    const sg = document.createElement("div");
+    sg.className = "suggests";
+    for (const s of opts.suggestions) {
+      const b = document.createElement("button");
+      b.textContent = s;
+      b.onclick = () => { input.value = s; autoGrow(); input.focus(); };
+      sg.appendChild(b);
+    }
+    col.appendChild(sg);
+  }
+
+  wrap.appendChild(col);
+
+  if (role === "user") {
+    const av = document.createElement("div");
+    av.className = "avatar user";
+    av.textContent = "我";
+    wrap.appendChild(av);
+  }
+
+  chatInner.appendChild(wrap);
+  scrollBottom();
+  return bubble;
+}
+
+function appendError(text) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg bot";
+
+  const av = document.createElement("div");
+  av.className = "avatar bot";
+  av.textContent = "AI";
+  wrap.appendChild(av);
+
+  const col = document.createElement("div");
+  col.className = "col";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble error";
+  bubble.textContent = text;
+  col.appendChild(bubble);
+
+  wrap.appendChild(col);
+  chatInner.appendChild(wrap);
+  scrollBottom();
+}
+
+/* =========================================================
+ * 会话操作
+ * =======================================================*/
+function newChat(silent) {
+  const c = {
+    id: uid(),
+    title: "新对话",
+    mode: state.mode,
+    sub: state.sub,
+    messages: [{
+      role: "bot",
+      content: greeting(state.mode, state.sub),
+      ts: Date.now()
+    }],
+    updatedAt: Date.now()
+  };
+  state.convos.unshift(c);
+  state.currentId = c.id;
+  save();
+
+  if (!silent) {
+    renderAll();
+    input.value = "";
+    autoGrow();
+    input.focus();
+  }
+}
+
+function openConvo(id) {
+  const c = state.convos.find(x => x.id === id);
+  if (!c) return;
+  state.currentId = id;
+  state.mode = c.mode || "match";
+  state.sub = c.sub || "standard";
+  renderAll();
+  save();
+  input.focus();
+}
+
+function deleteConvo(id) {
+  state.convos = state.convos.filter(c => c.id !== id);
+  if (state.currentId === id) {
+    state.currentId = null;
+    if (state.convos.length) { openConvo(state.convos[0].id); return; }
+    newChat();
+    return;
+  }
+  renderHistory();
+  save();
+}
+
+function switchMode(mode) {
+  if (state.mode === mode) return;
+  state.mode = mode;
+
+  const c = currentConvo();
+  if (c) {
+    c.mode = mode;
+    // 会话还没开始时，同步替换开场白
+    if (c.messages.length === 1 && c.messages[0].role === "bot") {
+      c.messages[0].content = greeting(mode, state.sub);
+    }
+  }
+  renderAll();
+  save();
+  input.focus();
+}
+
+function switchSub(sub) {
+  if (state.sub === sub) return;
+  state.sub = sub;
+
+  const c = currentConvo();
+  if (c) {
+    c.sub = sub;
+    if (c.messages.length === 1 && c.messages[0].role === "bot") {
+      c.messages[0].content = greeting(state.mode, sub);
+    }
+  }
+  renderAll();
+  save();
+  input.focus();
+}
+
+/* =========================================================
+ * 发送
+ * =======================================================*/
+function setBusy(v) {
+  busy = v;
+  btn.disabled = v;
+}
+
+async function send() {
+  const text = input.value.trim();
+  if (!text || busy) return;
+
+  const c = ensureConvo();
+
+  // 1. 上屏用户消息
+  appendBubble("user", text);
+  pushMessage(c, "user", text);
+
+  // 2. 首条消息作为会话标题
+  if (!c.title || c.title === "新对话") {
+    c.title = text.length > 18 ? text.slice(0, 18) + "…" : text;
+    topTitle.textContent = c.title;
+    renderHistory();
+  }
+
+  input.value = "";
+  autoGrow();
+  setBusy(true);
+
+  // 3. 打字占位
+  const typing = appendBubble("bot", "", { typing: true });
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: text,
+        mode: state.mode,                                   // match | evaluate
+        sub_mode: state.mode === "match" ? state.sub : null, // standard | auto
+        conversation_id: c.id,
+        history: c.messages.slice(0, -1).map(m => ({
+          role: m.role,
+          content: m.content
+        }))
+      })
+    });
+
+    if (!res.ok) throw new Error("接口返回 " + res.status);
+
+    const data = await res.json();
+    const reply = data.reply ?? data.content ?? "（无返回内容）";
+
+    typing.closest(".msg").remove();
+    appendBubble("bot", reply, { suggestions: data.suggestions });
+    pushMessage(c, "bot", reply, data.suggestions);
+
+  } catch (err) {
+    typing.closest(".msg").remove();
+    appendError("请求失败：" + err.message + "（请确认后端 " + API_URL + " 已启动）");
+  } finally {
+    setBusy(false);
+    input.focus();
+    save();
+  }
+}
+
+function pushMessage(c, role, content, suggestions) {
+  c.messages.push({ role, content, suggestions, ts: Date.now() });
+  c.updatedAt = Date.now();
+  // 活跃会话置顶
+  state.convos = [c, ...state.convos.filter(x => x.id !== c.id)];
+  renderHistory();
+  save();
+}
+
+/* =========================================================
+ * 输入框
+ * =======================================================*/
+function autoGrow() {
+  input.style.height = "auto";
+  input.style.height = Math.min(input.scrollHeight, 160) + "px";
+}
+
+input.addEventListener("input", autoGrow);
+
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+});
+
+modeSwitch.addEventListener("click", e => {
+  const b = e.target.closest("button[data-mode]");
+  if (b) switchMode(b.dataset.mode);
+});
+
+subSwitch.addEventListener("click", e => {
+  const b = e.target.closest("button[data-sub]");
+  if (b) switchSub(b.dataset.sub);
+});
+
+/* =========================================================
+ * 启动
+ * =======================================================*/
+(function init() {
+  let saved = null;
+  try {
+    saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+  } catch (e) { saved = null; }
+
+  if (saved && Array.isArray(saved.convos) && saved.convos.length) {
+    state.convos = saved.convos;
+    state.currentId = saved.convos.some(c => c.id === saved.currentId)
+      ? saved.currentId
+      : saved.convos[0].id;
+
+    const c = currentConvo();
+    state.mode = c.mode || "match";
+    state.sub = c.sub || "standard";
+
+    renderAll();
+  } else {
+    newChat(true);
+    renderAll();
+  }
+
+  autoGrow();
+  input.focus();
+})();
+</script>
+</body>
+</html>
