@@ -2,8 +2,10 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%23059669'/><text x='16' y='22' font-size='13' font-weight='bold' text-anchor='middle' fill='white'>ED</text></svg>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>企业决策支持系统</title>
+    <link rel="stylesheet" href="./opening.css">
     <style>
         :root {
             --ink: #0b1220;
@@ -491,7 +493,13 @@
             gap: 14px;
         }
         .foot-bottom p { font-size: .78rem; }
-        .foot-links { display: flex; gap: 22px; }
+        .foot-beian {
+            margin-left: 10px;
+            padding-left: 10px;
+            border-left: 1px solid #1e293b;
+            color: #64748b;
+        }
+        .foot-links { display: flex; gap: 22px; flex-wrap: wrap; }
         .foot-links a { font-size: .78rem; color: #64748b; transition: color .16s; }
         .foot-links a:hover { color: #cbd5e1; }
 
@@ -714,7 +722,18 @@
         }
     </style>
 </head>
-<body>
+<body class="intro-lock">
+
+<!-- 开场动画 -->
+<div id="intro" role="presentation" aria-hidden="true">
+    <div class="intro-inner">
+        <div class="intro-mark">ED</div>
+        <div class="intro-title">企业决策支持系统<br><span class="grad">有史可依 · 有据可查</span></div>
+        <div class="intro-sub">正在装载决策知识库</div>
+        <div class="intro-bar"><span></span></div>
+    </div>
+    <div class="intro-foot">HEIT-DSS</div>
+</div>
 
 <!-- Header -->
 <header id="header">
@@ -759,7 +778,7 @@
 </section>
 
 <!-- Capabilities -->
-<section class="sec-light">
+<section class="sec-light" id="caps">
     <div class="container">
         <div class="sec-head reveal">
             <div class="sec-eyebrow">🛡️ 核心能力</div>
@@ -808,7 +827,7 @@
 </section>
 
 <!-- Evidence -->
-<section>
+<section id="status">
     <div class="container">
         <div class="sec-head reveal">
             <div class="sec-eyebrow">✅ 验证与进展</div>
@@ -859,19 +878,19 @@
             <div class="foot-col">
                 <h4>产品</h4>
                 <ul>
-                    <li><a href="#">功能概览</a></li>
-                    <li><a href="#">解决方案</a></li>
-                    <li><a href="#">更新日志</a></li>
-                    <li><a href="#">价格方案</a></li>
+                    <li><a href="#caps">功能概览</a></li>
+                    <li><a href="#status">当前进展</a></li>
+                    <li><a href="./about.html">技术路线</a></li>
+                    <li><a href="./about.html#s5">适用场景</a></li>
                 </ul>
             </div>
             <div class="foot-col">
                 <h4>资源</h4>
                 <ul>
-                    <li><a href="#">帮助中心</a></li>
-                    <li><a href="#">最佳实践</a></li>
-                    <li><a href="#">技术博客</a></li>
-                    <li><a href="#">社区论坛</a></li>
+                    <li><a href="./about.html">关于我们</a></li>
+                    <li><a href="./disclaimer.html">使用须知</a></li>
+                    <li><a href="./terms.html">服务条款</a></li>
+                    <li><a href="./privacy.html">隐私政策</a></li>
                 </ul>
             </div>
             <div class="foot-col">
@@ -884,11 +903,13 @@
             </div>
         </div>
         <div class="foot-bottom">
-            <p>&copy; 2025 企业决策支持系统. 保留所有权利.</p>
+            <p>&copy; 2025 企业决策支持系统. 保留所有权利. <span class="foot-beian">京ICP备00000000号</span></p>
             <div class="foot-links">
-                <a href="#">隐私政策</a>
-                <a href="#">服务条款</a>
-                <a href="#">Cookie 设置</a>
+                <a href="./terms.html">服务条款</a>
+                <a href="./privacy.html">隐私政策</a>
+                <a href="./cookie.html">Cookie 设置</a>
+                <a href="./disclaimer.html">免责声明</a>
+                <a href="./about.html">关于我们</a>
             </div>
         </div>
     </div>
@@ -933,6 +954,49 @@
 </div>
 
 <script>
+    /* ---------- 开场动画 ---------- */
+    (function () {
+        const intro = document.getElementById('intro');
+        const KEY = 'edss_intro_seen';
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // 本次会话内已播放过，或用户偏好减少动效 → 直接跳过
+        let played = false;
+        try { played = sessionStorage.getItem(KEY) === '1'; } catch (e) {}
+
+        if (reduce || played) {
+            intro.classList.add('gone');
+            document.body.classList.remove('intro-lock');
+            document.body.classList.add('intro-play');
+            return;
+        }
+
+        try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
+
+        const END = 1900; // 进度条走完的时刻
+
+        setTimeout(() => {
+            intro.classList.add('done');
+            document.body.classList.remove('intro-lock');
+            document.body.classList.add('intro-play');
+
+            // 幕布完全上移后移除节点，避免影响滚动与层级
+            setTimeout(() => {
+                intro.classList.add('gone');
+                intro.remove();
+                document.body.classList.remove('intro-play');
+            }, 1200);
+        }, END);
+
+        // 允许点击跳过
+        intro.addEventListener('click', () => {
+            intro.classList.add('done');
+            document.body.classList.remove('intro-lock');
+            document.body.classList.add('intro-play');
+            setTimeout(() => { intro.remove(); document.body.classList.remove('intro-play'); }, 1100);
+        });
+    })();
+
     // Reveal on scroll
     const io = new IntersectionObserver((entries) => {
         entries.forEach(e => {

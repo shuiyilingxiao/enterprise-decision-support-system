@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%23059669'/><text x='16' y='22' font-size='13' font-weight='bold' text-anchor='middle' fill='white'>ED</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cookie 设置 · 企业决策支持系统</title>
+<meta name="description" content="企业决策支持系统 Cookie 使用说明与偏好设置，您可在此查看并管理各类 Cookie 的启用状态。">
+<link rel="stylesheet" href="./legal.css">
+<style>
+    /* Cookie 偏好面板 */
+    .ck-panel {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin: 22px 0 26px;
+        box-shadow: var(--shadow-sm);
+    }
+    .ck-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--line-2);
+        background: #fff;
+        transition: background .2s var(--ease);
+    }
+    .ck-row:last-child { border-bottom: none; }
+    .ck-row:hover { background: var(--bg-2); }
+    .ck-info { flex: 1; min-width: 0; }
+    .ck-info h4 {
+        font-size: .92rem;
+        font-weight: 650;
+        color: var(--ink);
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: -.01em;
+    }
+    .ck-info h4 .req {
+        font-size: .66rem;
+        font-weight: 700;
+        letter-spacing: .04em;
+        color: var(--green-2);
+        background: var(--green-bg);
+        border: 1px solid #d1fae5;
+        padding: 1px 7px;
+        border-radius: 100px;
+    }
+    .ck-info p {
+        font-size: .83rem;
+        color: var(--ink-3);
+        line-height: 1.7;
+        margin: 0;
+    }
+    .ck-switch {
+        flex: none;
+        position: relative;
+        width: 44px;
+        height: 24px;
+        border-radius: 100px;
+        background: #cbd5e1;
+        border: none;
+        cursor: pointer;
+        transition: background .24s var(--ease);
+        margin-top: 2px;
+    }
+    .ck-switch::after {
+        content: '';
+        position: absolute;
+        top: 3px; left: 3px;
+        width: 18px; height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(15,23,42,.25);
+        transition: transform .24s var(--ease);
+    }
+    .ck-switch[aria-checked="true"] { background: var(--green); }
+    .ck-switch[aria-checked="true"]::after { transform: translateX(20px); }
+    .ck-switch:disabled { cursor: not-allowed; opacity: .55; }
+    .ck-switch:not(:disabled):focus-visible {
+        outline: 2px solid var(--green-3);
+        outline-offset: 3px;
+    }
+
+    .ck-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        margin-top: 20px;
+    }
+    .ck-btn {
+        font-size: .86rem;
+        font-weight: 600;
+        padding: 10px 22px;
+        border-radius: 10px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: transform .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease);
+    }
+    .ck-btn.primary {
+        background: linear-gradient(160deg, #059669, #047857);
+        color: #fff;
+        box-shadow: 0 10px 22px -10px rgba(5,150,105,.65), inset 0 1px 0 rgba(255,255,255,.2);
+    }
+    .ck-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 14px 28px -10px rgba(5,150,105,.7); }
+    .ck-btn.ghost {
+        background: #fff;
+        border-color: var(--line);
+        color: var(--ink-2);
+        box-shadow: var(--shadow-sm);
+    }
+    .ck-btn.ghost:hover { background: var(--bg-3); border-color: #cbd5e1; transform: translateY(-1px); }
+
+    .ck-saved {
+        font-size: .82rem;
+        color: var(--green-2);
+        font-weight: 600;
+        opacity: 0;
+        transform: translateX(-6px);
+        transition: opacity .3s var(--ease), transform .3s var(--ease);
+    }
+    .ck-saved.show { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<header id="header">
+    <div class="nav-inner">
+        <a href="./index.html" class="logo">
+            <div class="logo-mark">ED</div>
+            <span class="logo-text">企业决策支持系统</span>
+        </a>
+        <div class="nav-actions">
+            <a href="./index.html" class="btn-back">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+                返回首页
+            </a>
+        </div>
+    </div>
+</header>
+
+<section class="doc-hero">
+    <div class="container">
+        <div class="doc-eyebrow reveal">偏好管理</div>
+        <h1 class="reveal">Cookie <span class="grad">设置</span></h1>
+        <p class="doc-meta reveal">
+            <span>版本 v1.0</span>
+            <span class="dot"></span>
+            <span>最近更新：2025 年 1 月 1 日</span>
+        </p>
+    </div>
+</section>
+
+<div class="container">
+    <div class="doc-wrap">
+
+        <nav class="toc" id="toc">
+            <div class="toc-title">目录</div>
+            <a href="#s1">一、什么是 Cookie</a>
+            <a href="#s2">二、我们使用的类型</a>
+            <a href="#s3">三、管理您的偏好</a>
+            <a href="#s4">四、浏览器端设置</a>
+            <a href="#s5">五、联系我们</a>
+        </nav>
+
+        <main class="doc-body">
+
+            <div class="doc-intro reveal">
+                Cookie 是网站存储在您浏览器中的小型文本文件，用于记住您的偏好、维持登录状态并帮助我们了解服务的使用情况。本页面说明我们使用了哪些类型的 Cookie，您也可以在此直接调整非必要 Cookie 的开关。
+            </div>
+
+            <section id="s1" class="reveal">
+                <h2><span class="idx">01</span>什么是 Cookie</h2>
+                <p>当您访问本平台时，服务器会向您的浏览器发送一段标识信息，浏览器将其保存在本地。下次访问时，浏览器会将这些信息回传，使网站能够"认出"您。</p>
+                <p>除 Cookie 外，我们还可能使用 localStorage 等技术保存少量本地状态（例如界面偏好）。本政策中提及的 Cookie 一词，涵盖此类同类技术。</p>
+            </section>
+
+            <section id="s2" class="reveal">
+                <h2><span class="idx">02</span>我们使用的类型</h2>
+                <div class="doc-table-wrap">
+                    <table class="doc-table">
+                        <thead>
+                            <tr><th>类型</th><th>用途</th><th>能否关闭</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>必要 Cookie</td><td>维持登录状态、防范跨站请求伪造、保障基础功能可用</td><td>不可关闭</td></tr>
+                            <tr><td>功能 Cookie</td><td>记住您的语言、主题、侧边栏折叠等界面偏好</td><td>可以关闭</td></tr>
+                            <tr><td>分析 Cookie</td><td>统计访问量与功能使用频次，用于改进产品</td><td>可以关闭</td></tr>
+                            <tr><td>营销 Cookie</td><td>衡量推广效果、避免重复展示</td><td>可以关闭</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="note">
+                    <div class="ico">i</div>
+                    <div>我们<strong>不使用</strong> Cookie 收集您的身份证号、银行卡号等敏感个人信息，也不会将其用于超出上述目的的用途。</div>
+                </div>
+            </section>
+
+            <section id="s3" class="reveal">
+                <h2><span class="idx">03</span>管理您的偏好</h2>
+                <p>您可以按类别开启或关闭非必要的 Cookie。您的选择会保存在本地浏览器中，下次访问时自动生效。</p>
+
+                <div class="ck-panel">
+                    <div class="ck-row">
+                        <div class="ck-info">
+                            <h4>必要 Cookie <span class="req">必需</span></h4>
+                            <p>用于维持登录会话、保障安全校验与基础功能运行。关闭后将无法正常登录与使用服务。</p>
+                        </div>
+                        <button class="ck-switch" aria-checked="true" disabled aria-label="必要 Cookie，不可关闭"></button>
+                    </div>
+                    <div class="ck-row">
+                        <div class="ck-info">
+                            <h4>功能 Cookie</h4>
+                            <p>记住您的界面偏好设置，例如默认展开的目录、主题与字体大小。</p>
+                        </div>
+                        <button class="ck-switch" data-key="functional" aria-checked="true" aria-label="功能 Cookie"></button>
+                    </div>
+                    <div class="ck-row">
+                        <div class="ck-info">
+                            <h4>分析 Cookie</h4>
+                            <p>帮助我们了解哪些功能被频繁使用、哪些页面存在异常，从而持续优化体验。</p>
+                        </div>
+                        <button class="ck-switch" data-key="analytics" aria-checked="true" aria-label="分析 Cookie"></button>
+                    </div>
+                    <div class="ck-row">
+                        <div class="ck-info">
+                            <h4>营销 Cookie</h4>
+                            <p>用于评估推广渠道效果。关闭后您仍可正常使用全部核心功能。</p>
+                        </div>
+                        <button class="ck-switch" data-key="marketing" aria-checked="false" aria-label="营销 Cookie"></button>
+                    </div>
+                </div>
+
+                <div class="ck-actions">
+                    <button class="ck-btn primary" id="ckSave">保存偏好</button>
+                    <button class="ck-btn ghost" id="ckReset">恢复默认</button>
+                    <span class="ck-saved" id="ckSaved">✓ 已保存</span>
+                </div>
+            </section>
+
+            <section id="s4" class="reveal">
+                <h2><span class="idx">04</span>浏览器端设置</h2>
+                <p>您也可以通过浏览器自行管理或清除 Cookie。以下是主流浏览器的设置路径：</p>
+                <ul>
+                    <li><strong>Chrome</strong>：设置 → 隐私和安全 → 第三方 Cookie</li>
+                    <li><strong>Edge</strong>：设置 → Cookie 和网站权限 → 管理和删除 Cookie</li>
+                    <li><strong>Firefox</strong>：设置 → 隐私与安全 → Cookie 和网站数据</li>
+                    <li><strong>Safari</strong>：偏好设置 → 隐私 → 管理网站数据</li>
+                </ul>
+                <div class="note warn">
+                    <div class="ico">!</div>
+                    <div>若您完全禁用 Cookie，本平台的登录与历史记录功能可能无法正常工作。</div>
+                </div>
+            </section>
+
+            <section id="s5" class="reveal">
+                <h2><span class="idx">05</span>联系我们</h2>
+                <p>如您对 Cookie 的使用有任何疑问，欢迎通过以下方式联系我们：</p>
+                <div class="doc-table-wrap">
+                    <table class="doc-table">
+                        <thead>
+                            <tr><th>联系方式</th><th>详情</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>邮箱</td><td>privacy@edss.com</td></tr>
+                            <tr><td>电话</td><td>400-888-8888</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>更多关于个人信息处理的信息，请参阅<a class="link" href="./privacy.html">《隐私政策》</a>。</p>
+            </section>
+
+            <div class="doc-foot">
+                <p>本页面内容自 2025 年 1 月 1 日起适用。</p>
+                <button class="btn-top" id="backTop">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                    回到顶部
+                </button>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="foot-inner">
+            <a href="./index.html" class="foot-brand">
+                <div class="logo-mark">ED</div>
+                <span>企业决策支持系统</span>
+            </a>
+            <div class="foot-links">
+                <a href="./terms.html">服务条款</a>
+                <a href="./privacy.html">隐私政策</a>
+                <a href="./cookie.html" class="current">Cookie 设置</a>
+                <a href="./disclaimer.html">免责声明</a>
+                <a href="./about.html">关于我们</a>
+            </div>
+        </div>
+        <div class="foot-inner" style="margin-top:18px;">
+            <p class="foot-copy">&copy; 2025 企业决策支持系统. 保留所有权利.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    const header = document.getElementById('header');
+    const bar = document.getElementById('progressBar');
+    const onScroll = () => {
+        header.classList.toggle('scrolled', window.scrollY > 8);
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    document.getElementById('backTop').addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+    }, { threshold: .08, rootMargin: '0px 0px -40px' });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    const tocLinks = Array.from(document.querySelectorAll('#toc a'));
+    const sections = tocLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+    const spy = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+            }
+        });
+    }, { rootMargin: '-88px 0px -70% 0px' });
+    sections.forEach(s => spy.observe(s));
+
+    /* ---------- Cookie 偏好持久化 ---------- */
+    const CK_KEY = 'edss_cookie_prefs';
+    const DEFAULTS = { functional: true, analytics: true, marketing: false };
+    const switches = Array.from(document.querySelectorAll('.ck-switch[data-key]'));
+
+    function loadPrefs() {
+        try {
+            const raw = localStorage.getItem(CK_KEY);
+            return raw ? Object.assign({}, DEFAULTS, JSON.parse(raw)) : Object.assign({}, DEFAULTS);
+        } catch (e) {
+            return Object.assign({}, DEFAULTS);
+        }
+    }
+
+    function applyPrefs(prefs) {
+        switches.forEach(btn => {
+            btn.setAttribute('aria-checked', prefs[btn.dataset.key] ? 'true' : 'false');
+        });
+    }
+
+    applyPrefs(loadPrefs());
+
+    switches.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const on = btn.getAttribute('aria-checked') === 'true';
+            btn.setAttribute('aria-checked', on ? 'false' : 'true');
+        });
+    });
+
+    const savedTip = document.getElementById('ckSaved');
+    let savedTimer = null;
+
+    document.getElementById('ckSave').addEventListener('click', () => {
+        const prefs = {};
+        switches.forEach(btn => { prefs[btn.dataset.key] = btn.getAttribute('aria-checked') === 'true'; });
+        try { localStorage.setItem(CK_KEY, JSON.stringify(prefs)); } catch (e) {}
+        savedTip.classList.add('show');
+        clearTimeout(savedTimer);
+        savedTimer = setTimeout(() => savedTip.classList.remove('show'), 2400);
+    });
+
+    document.getElementById('ckReset').addEventListener('click', () => {
+        try { localStorage.removeItem(CK_KEY); } catch (e) {}
+        applyPrefs(DEFAULTS);
+    });
+</script>
+</body>
+</html>

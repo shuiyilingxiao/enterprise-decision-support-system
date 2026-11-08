@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%23059669'/><text x='16' y='22' font-size='13' font-weight='bold' text-anchor='middle' fill='white'>ED</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关于我们 · 企业决策支持系统</title>
+<meta name="description" content="了解 HEIT-DSS 企业决策支持系统的产品理念、技术路线与团队。让战略决策有史可依，有据可查。">
+<link rel="stylesheet" href="./legal.css">
+<style>
+    .about-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin: 22px 0 8px;
+    }
+    .about-card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 24px 24px 22px;
+        position: relative;
+        overflow: hidden;
+        transition: transform .3s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease);
+    }
+    .about-card::before {
+        content: '';
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--green-3), transparent);
+        opacity: 0;
+        transition: opacity .3s var(--ease);
+    }
+    .about-card:hover {
+        transform: translateY(-4px);
+        border-color: #bbf7d0;
+        box-shadow: 0 20px 40px -22px rgba(5,150,105,.32);
+    }
+    .about-card:hover::before { opacity: 1; }
+    .about-card .ico {
+        width: 40px; height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(160deg, #ecfdf5, #d1fae5);
+        border: 1px solid #a7f3d0;
+        display: grid; place-items: center;
+        font-size: 1.1rem;
+        margin-bottom: 14px;
+    }
+    .about-card h4 {
+        font-size: .96rem;
+        font-weight: 650;
+        color: var(--ink);
+        margin-bottom: 7px;
+        letter-spacing: -.012em;
+    }
+    .about-card p {
+        font-size: .855rem;
+        color: var(--ink-3);
+        line-height: 1.75;
+        margin: 0;
+    }
+
+    /* 使命引言块 */
+    .mission {
+        position: relative;
+        text-align: center;
+        padding: 44px 32px;
+        margin: 8px 0 40px;
+        border-radius: var(--radius);
+        background: linear-gradient(160deg, #f8fafc, #ecfdf5);
+        border: 1px solid #d1fae5;
+        overflow: hidden;
+    }
+    .mission::before {
+        content: '';
+        position: absolute;
+        top: -120px; left: 50%;
+        transform: translateX(-50%);
+        width: 520px; height: 320px;
+        background: radial-gradient(circle, rgba(16,185,129,.14), transparent 62%);
+        pointer-events: none;
+    }
+    .mission blockquote {
+        position: relative;
+        font-size: clamp(1.05rem, 2.4vw, 1.45rem);
+        font-weight: 650;
+        letter-spacing: -.022em;
+        line-height: 1.6;
+        color: var(--ink);
+        margin-bottom: 12px;
+    }
+    .mission blockquote .grad {
+        background: linear-gradient(100deg, #059669 0%, #10b981 50%, #34d399 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .mission span {
+        position: relative;
+        font-size: .84rem;
+        color: var(--ink-3);
+    }
+
+    /* 数据条 */
+    .about-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+        margin: 26px 0 8px;
+    }
+    .about-stat {
+        background: #fff;
+        padding: 20px 14px;
+        text-align: center;
+    }
+    .about-stat .n {
+        font-size: 1.32rem;
+        font-weight: 700;
+        color: var(--ink);
+        letter-spacing: -.03em;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.25;
+    }
+    .about-stat .l {
+        font-size: .74rem;
+        color: var(--ink-4);
+        margin-top: 4px;
+    }
+
+    /* 对比表强调列 */
+    .doc-table td.brand-cell {
+        color: var(--green-2);
+        font-weight: 600;
+        background: rgba(236,253,245,.55);
+    }
+    .doc-table th.brand-cell { background: var(--green-bg); color: #065f46; }
+
+    @media (max-width: 780px) {
+        .about-grid { grid-template-columns: 1fr; }
+        .about-stats { grid-template-columns: repeat(2, 1fr); }
+        .mission { padding: 32px 20px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<header id="header">
+    <div class="nav-inner">
+        <a href="./index.html" class="logo">
+            <div class="logo-mark">ED</div>
+            <span class="logo-text">企业决策支持系统</span>
+        </a>
+        <div class="nav-actions">
+            <a href="./index.html" class="btn-back">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+                返回首页
+            </a>
+        </div>
+    </div>
+</header>
+
+<section class="doc-hero">
+    <div class="container">
+        <div class="doc-eyebrow reveal">关于我们</div>
+        <h1 class="reveal">让战略决策<span class="grad">有史可依</span></h1>
+        <p class="doc-meta reveal">
+            <span>HEIT-DSS</span>
+            <span class="dot"></span>
+            <span>History-Empirical and Interdisciplinary Theory-based Decision Support System</span>
+        </p>
+    </div>
+</section>
+
+<div class="container">
+    <div class="doc-wrap">
+
+        <nav class="toc" id="toc">
+            <div class="toc-title">目录</div>
+            <a href="#s1">一、我们是谁</a>
+            <a href="#s2">二、为什么要做</a>
+            <a href="#s3">三、核心思路</a>
+            <a href="#s4">四、技术路线</a>
+            <a href="#s5">五、适用场景</a>
+            <a href="#s6">六、与同类方案的区别</a>
+            <a href="#s7">七、项目进展</a>
+            <a href="#s8">八、联系我们</a>
+        </nav>
+
+        <main class="doc-body">
+
+            <div class="doc-intro reveal">
+                HEIT-DSS 是一个面向企业或个人的战略决策智能支持系统。它的目标很朴素：让每一次重要的战略选择，都能找到历史上的参照、理论上的解释，以及可以复核的依据。
+            </div>
+
+            <section id="s1" class="reveal">
+                <h2><span class="idx">01</span>我们是谁</h2>
+                <p>我们是一支来自北京邮电大学人工智能专业的研究与开发团队，长期关注大语言模型在垂直决策场景中的落地问题。</p>
+                <p>在研究中我们反复遇到同一个矛盾：通用大模型能快速给出建议，但这些建议往往缺乏依据、难以验证；而传统战略咨询虽然严谨，却周期长、成本高，难以规模化复用。</p>
+                <div class="about-stats">
+                    <div class="about-stat">
+                        <div class="n">3,000+</div>
+                        <div class="l">结构化案例切片</div>
+                    </div>
+                    <div class="about-stat">
+                        <div class="n">50+</div>
+                        <div class="l">行业覆盖</div>
+                    </div>
+                    <div class="about-stat">
+                        <div class="n">100%</div>
+                        <div class="l">决策可追溯</div>
+                    </div>
+                    <div class="about-stat">
+                        <div class="n">4</div>
+                        <div class="l">核心能力模块</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="s2" class="reveal">
+                <h2><span class="idx">02</span>为什么要做</h2>
+                <div class="mission">
+                    <blockquote>让战略决策<span class="grad">有史可依，有据可查</span></blockquote>
+                    <span>这是我们做这件事的全部理由</span>
+                </div>
+                <p>商业史上，几乎每一个"新问题"都能在某个角落找到结构相似的旧答案。糖果行业的低端颠覆逻辑，可以被迁移到新能源车的市场切入；某个消费品类的渠道下沉经验，也可能启发另一个行业的区域扩张。</p>
+                <p>但这些经验散落在案例、传记与研究文献中，人与人的传递效率极低。我们想做的，是把这套隐性的、依赖专家记忆的判断方式，转化为可检索、可复用、可验证的系统能力。</p>
+            </section>
+
+            <section id="s3" class="reveal">
+                <h2><span class="idx">03</span>核心思路</h2>
+                <p>我们不追求"更大的模型"，而是追求<strong>更好的知识组织方式</strong>。</p>
+                <ul>
+                    <li><strong>条件策略匹配</strong>：从历史案例中自动归纳"满足什么条件 → 采用什么策略 → 成功率如何"的规则，而不是简单地检索相似案例。</li>
+                    <li><strong>跨行业迁移</strong>：不局限于单一行业，允许结构相似的策略在不同领域之间流动。</li>
+                    <li><strong>可解释输出</strong>：每条建议都附带历史案例引用、理论依据、适用边界与风险提示。</li>
+                    <li><strong>自迭代进化</strong>：系统根据用户反馈与新增案例持续优化条件组与策略库，越用越准。</li>
+                </ul>
+            </section>
+
+            <section id="s4" class="reveal">
+                <h2><span class="idx">04</span>技术路线</h2>
+                <div class="about-grid">
+                    <div class="about-card">
+                        <div class="ico">🧩</div>
+                        <h4>条件策略匹配器</h4>
+                        <p>将案例拆解为「元条件 + 附加条件」的结构化表达，支持精确匹配、相似度控制与条件自动升格。</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="ico">✅</div>
+                        <h4>后验验证机制</h4>
+                        <p>每条拟合出的条件组，需通过随机抽样案例的回测检验，成功率超过阈值才会被采纳入库。</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="ico">🤖</div>
+                        <h4>多智能体协作</h4>
+                        <p>用户对接、历史分析、理论匹配、条件匹配、反馈迭代等角色协同处理，逐层递进验证。</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="ico">🔁</div>
+                        <h4>Harness Engineering</h4>
+                        <p>不依赖模型训练或微调，而是通过提示词编排、智能体协作与结构化知识库，引导通用模型进入垂直场景。</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="s5" class="reveal">
+                <h2><span class="idx">05</span>适用场景</h2>
+                <h3>企业方向</h3>
+                <ul>
+                    <li>中小企业战略规划与业务转型</li>
+                    <li>创业方向验证与市场切入点选择</li>
+                    <li>投资尽调辅助与行业研究</li>
+                    <li>商学院案例教学与复盘训练</li>
+                </ul>
+                <h3>个人方向</h3>
+                <ul>
+                    <li>自媒体增长策略与内容定位</li>
+                    <li>个人品牌塑造与差异化路径</li>
+                    <li>副业方向选择与可行性评估</li>
+                    <li>职业发展路径规划</li>
+                </ul>
+            </section>
+
+            <section id="s6" class="reveal">
+                <h2><span class="idx">06</span>与同类方案的区别</h2>
+                <div class="doc-table-wrap">
+                    <table class="doc-table">
+                        <thead>
+                            <tr>
+                                <th>维度</th>
+                                <th>通用大模型</th>
+                                <th>传统咨询</th>
+                                <th class="brand-cell">HEIT-DSS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>速度</td><td>快</td><td>慢</td><td class="brand-cell">快</td></tr>
+                            <tr><td>成本</td><td>低</td><td>高</td><td class="brand-cell">低</td></tr>
+                            <tr><td>可解释性</td><td>弱</td><td>强</td><td class="brand-cell">强</td></tr>
+                            <tr><td>历史依据</td><td>无</td><td>有</td><td class="brand-cell">有</td></tr>
+                            <tr><td>可迭代</td><td>无</td><td>无</td><td class="brand-cell">有</td></tr>
+                            <tr><td>适用对象</td><td>泛化</td><td>企业为主</td><td class="brand-cell">企业 + 个人</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="s7" class="reveal">
+                <h2><span class="idx">07</span>项目进展</h2>
+                <ul>
+                    <li>历史案例库构建（多行业、多年代）——已完成</li>
+                    <li>条件策略匹配器设计与实现——已完成</li>
+                    <li>后验验证流程——已完成</li>
+                    <li>企业内部试点与用户盲测——进行中</li>
+                    <li>论文撰写与开源发布——规划中</li>
+                </ul>
+                <div class="note">
+                    <div class="ico">i</div>
+                    <div>我们当前处于持续迭代阶段，功能与数据仍在完善中。您的每一条反馈都会被纳入下一轮的优化清单。</div>
+                </div>
+            </section>
+
+            <section id="s8" class="reveal">
+                <h2><span class="idx">08</span>联系我们</h2>
+                <p>无论是产品建议、合作意向还是学术交流，都欢迎与我们取得联系。</p>
+                <div class="doc-table-wrap">
+                    <table class="doc-table">
+                        <thead>
+                            <tr><th>渠道</th><th>详情</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>通用邮箱</td><td>support@edss.com</td></tr>
+                            <tr><td>电话</td><td>400-888-8888</td></tr>
+                            <tr><td>地址</td><td>北京市海淀区西土城路 10 号</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>相关文件：<a class="link" href="./terms.html">《服务条款》</a> · <a class="link" href="./privacy.html">《隐私政策》</a> · <a class="link" href="./disclaimer.html">《免责声明》</a></p>
+            </section>
+
+            <div class="doc-foot">
+                <p>感谢你读到这里。</p>
+                <button class="btn-top" id="backTop">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                    回到顶部
+                </button>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="foot-inner">
+            <a href="./index.html" class="foot-brand">
+                <div class="logo-mark">ED</div>
+                <span>企业决策支持系统</span>
+            </a>
+            <div class="foot-links">
+                <a href="./terms.html">服务条款</a>
+                <a href="./privacy.html">隐私政策</a>
+                <a href="./cookie.html">Cookie 设置</a>
+                <a href="./disclaimer.html">免责声明</a>
+                <a href="./about.html" class="current">关于我们</a>
+            </div>
+        </div>
+        <div class="foot-inner" style="margin-top:18px;">
+            <p class="foot-copy">&copy; 2025 企业决策支持系统. 保留所有权利.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    const header = document.getElementById('header');
+    const bar = document.getElementById('progressBar');
+    const onScroll = () => {
+        header.classList.toggle('scrolled', window.scrollY > 8);
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    document.getElementById('backTop').addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+    }, { threshold: .08, rootMargin: '0px 0px -40px' });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    const tocLinks = Array.from(document.querySelectorAll('#toc a'));
+    const sections = tocLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+    const spy = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+            }
+        });
+    }, { rootMargin: '-88px 0px -70% 0px' });
+    sections.forEach(s => spy.observe(s));
+</script>
+</body>
+</html>

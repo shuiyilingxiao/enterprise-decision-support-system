@@ -1,0 +1,245 @@
+/* ============================================================
+   开场动画 · 企业决策支持系统
+   视觉语言沿用首页：品牌绿渐变 / 网格底纹 / 柔和光晕 / ED 标识
+   ============================================================ */
+
+#intro {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+/* 网格底纹（与首页 hero 同款） */
+#intro::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(to right, rgba(15, 23, 42, .035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, .035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, #000 20%, transparent 72%);
+    -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, #000 20%, transparent 72%);
+    opacity: 0;
+    animation: intro-grid-in .9s var(--ease, cubic-bezier(.2, .7, .3, 1)) .05s forwards;
+    z-index: -1;
+}
+
+/* 光晕 */
+#intro::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 760px; height: 620px;
+    transform: translate(-50%, -50%) scale(.7);
+    background:
+        radial-gradient(circle at 42% 44%, rgba(16, 185, 129, .18), transparent 58%),
+        radial-gradient(circle at 60% 54%, rgba(52, 211, 153, .14), transparent 56%);
+    filter: blur(16px);
+    opacity: 0;
+    animation: intro-glow-in 1.4s var(--ease, cubic-bezier(.2, .7, .3, 1)) .1s forwards;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes intro-grid-in {
+    to { opacity: 1; }
+}
+
+@keyframes intro-glow-in {
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.intro-inner {
+    text-align: center;
+    padding: 0 24px;
+    transform: translateY(-6px);
+}
+
+/* 标志 */
+.intro-mark {
+    width: 62px; height: 62px;
+    margin: 0 auto 22px;
+    border-radius: 18px;
+    background: linear-gradient(140deg, #059669 0%, #10b981 55%, #34d399 100%);
+    display: grid; place-items: center;
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -.03em;
+    box-shadow:
+        0 10px 28px -10px rgba(5, 150, 105, .7),
+        inset 0 1px 0 rgba(255, 255, 255, .38);
+    position: relative;
+    opacity: 0;
+    transform: scale(.7) translateY(14px);
+    animation: intro-mark-in .78s cubic-bezier(.22, 1.2, .36, 1) .12s forwards;
+}
+
+/* 标志外圈扩散 */
+.intro-mark::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 1px solid rgba(16, 185, 129, .55);
+    opacity: 0;
+    animation: intro-ring 1.5s var(--ease, cubic-bezier(.2, .7, .3, 1)) .5s forwards;
+}
+
+@keyframes intro-mark-in {
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes intro-ring {
+    0%   { opacity: .7; transform: scale(1); }
+    100% { opacity: 0; transform: scale(2.05); }
+}
+
+/* 标题 */
+.intro-title {
+    font-size: clamp(1.28rem, 3.4vw, 1.72rem);
+    font-weight: 700;
+    letter-spacing: -.035em;
+    color: #0b1220;
+    line-height: 1.3;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: intro-fade-up .8s var(--ease, cubic-bezier(.2, .7, .3, 1)) .34s forwards;
+}
+
+.intro-title .grad {
+    background: linear-gradient(100deg, #059669 0%, #10b981 46%, #34d399 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* 副标题 */
+.intro-sub {
+    margin-top: 12px;
+    font-size: .875rem;
+    color: #64748b;
+    letter-spacing: .01em;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: intro-fade-up .8s var(--ease, cubic-bezier(.2, .7, .3, 1)) .48s forwards;
+}
+
+@keyframes intro-fade-up {
+    to { opacity: 1; transform: none; }
+}
+
+/* 进度条 */
+.intro-bar {
+    width: 168px;
+    height: 2px;
+    margin: 34px auto 0;
+    border-radius: 100px;
+    background: #e6ebf2;
+    overflow: hidden;
+    opacity: 0;
+    animation: intro-fade-up .6s var(--ease, cubic-bezier(.2, .7, .3, 1)) .6s forwards;
+}
+
+.intro-bar span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #059669, #10b981, #34d399);
+    animation: intro-progress 1.15s cubic-bezier(.5, .05, .3, 1) .68s forwards;
+}
+
+@keyframes intro-progress {
+    0%   { width: 0%; }
+    42%  { width: 58%; }
+    100% { width: 100%; }
+}
+
+/* 底部标语 */
+.intro-foot {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 46px;
+    text-align: center;
+    font-size: .74rem;
+    letter-spacing: .1em;
+    color: #94a3b8;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: intro-fade-up .8s var(--ease, cubic-bezier(.2, .7, .3, 1)) .86s forwards;
+}
+
+/* ---------- 退场 ---------- */
+#intro.done .intro-inner {
+    opacity: 0;
+    transform: translateY(-14px) scale(.985);
+    transition: opacity .46s var(--ease, cubic-bezier(.2, .7, .3, 1)), transform .46s var(--ease, cubic-bezier(.2, .7, .3, 1));
+}
+
+#intro.done .intro-foot {
+    opacity: 0;
+    transition: opacity .3s var(--ease, cubic-bezier(.2, .7, .3, 1));
+}
+
+/* 上幕布 */
+#intro.done {
+    clip-path: inset(0 0 0 0);
+    animation: intro-lift .82s cubic-bezier(.6, .01, .24, 1) .34s forwards;
+}
+
+@keyframes intro-lift {
+    0%   { clip-path: inset(0 0 0 0); }
+    100% { clip-path: inset(0 0 100% 0); }
+}
+
+/* 完成后彻底移出文档流 */
+#intro.gone {
+    display: none;
+}
+
+/* ---------- 首屏内容延迟入场（与幕布上移衔接） ---------- */
+body.intro-lock {
+    overflow: hidden;
+}
+
+body.intro-lock header,
+body.intro-lock .hero .container,
+body.intro-lock main {
+    opacity: 0;
+    transform: translateY(16px);
+}
+
+body.intro-play header,
+body.intro-play .hero .container,
+body.intro-play main {
+    opacity: 1;
+    transform: none;
+    transition: opacity .78s var(--ease, cubic-bezier(.2, .7, .3, 1)) .1s, transform .78s var(--ease, cubic-bezier(.2, .7, .3, 1)) .1s;
+}
+
+/* 首屏内的 reveal 元素，在开场结束后重新触发 */
+body.intro-play .hero .reveal {
+    opacity: 1;
+    transform: none;
+}
+
+/* 减少动效偏好：直接跳过 */
+@media (prefers-reduced-motion: reduce) {
+    #intro { display: none !important; }
+    body.intro-lock header,
+    body.intro-lock .hero .container,
+    body.intro-lock main { opacity: 1; transform: none; }
+}
+
+@media (max-width: 640px) {
+    .intro-mark { width: 54px; height: 54px; border-radius: 16px; font-size: .95rem; margin-bottom: 18px; }
+    .intro-foot { bottom: 32px; font-size: .68rem; letter-spacing: .08em; }
+    .intro-bar { margin-top: 28px; }
+}
